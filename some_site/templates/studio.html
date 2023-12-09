@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Blog Studio{% endblock title %}
+{% block content %}
+<span>
+<img src="{{img_url}}" width="40px" height="40px">
+<p>{{name_of_blog}} by {{usr}}</p>
+<p>theme: {{theme_blog}}</p>
+<p>description : {{blog_description}}</p>
+</span>
+<h5>Статьи</h5>
+{{states_html}}
+{% endblock content %}

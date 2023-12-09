@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Новая статья{% endblock title %}
+{% block content %}
+<form method="POST" action="get_new_state/">
+  {% csrf_token %}
+  <!-- name of channel -->
+  <p>enter name of your state</p>
+  <input id="name_of_state" name="name_of_state" type="text" />
+  <p>enter text of your state</p>
+  <textarea id="name_of_state" class="in" name="text_of_state"  cols="30" rows="3" placeholder="Введите дополнительную информацию">
+  	
+  </textarea>
+  <input type="submit" value="Send">
+</form>
+{% endblock content %}

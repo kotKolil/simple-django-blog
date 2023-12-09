@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{topic}}{% endblock title %}
+{% block content %}
+  <img src='http://127.0.0.1:8000/media/{{img}}' width='30px' height="30px">
+  <p>{{author}}</p>
+  <span><p>{{date}}</p> <p>{{views}} views</p></span>
+  <h3>{{topic}}</h3>
+  <p id="text-style">
+    {{text}}
+  </p>
+  <hr>
+  <H3>Комментари</H3>
+  <script type="text/javascript">
+  	const url = new URL(window.location.href);
+  	state_id = url.searchParams.get('id');
+  	comment_block(state_id);
+
+  </script>
+
+  <div id = "block_comments">
+  <form method="post" action="http://127.0.0.1:8000/post_comment/">
+        {% csrf_token %}
+        <p>write your comment<br> <input name="text" /></p>
+        <input type="hidden" name="state_id" value={{st_id}}>
+        <input type="submit" value="Send" />
+  </form>
+
+{% endblock content %}
