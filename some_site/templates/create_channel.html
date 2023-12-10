@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Регистрация нового канала{% endblock title %}
 {% block content %}
-<form method="POST" action="get_new_channel/" enctype="multipart/form-data">
+<form method="POST" action="/" enctype="multipart/form-data">
   {% csrf_token %}
   <!-- name of channel -->
   <p for="name_of_channel">Enter name of your channel</p>

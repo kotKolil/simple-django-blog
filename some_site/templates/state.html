@@ -10,12 +10,14 @@
   </p>
   <hr>
   <H3>Комментари</H3>
+  {{del}}
   <script type="text/javascript">
   	const url = new URL(window.location.href);
   	state_id = url.searchParams.get('id');
   	comment_block(state_id);
 
   </script>
+
 
   <div id = "block_comments">
   <form method="post" action="http://127.0.0.1:8000/post_comment/">

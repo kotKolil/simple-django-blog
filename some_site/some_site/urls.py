@@ -38,16 +38,15 @@ urlpatterns = [
     path("logout/", views.lg),
     path("ish_kab/", views.ish_kab), 
     path('set_channel/' , views.set_channel),
-    path('set_channel/get_new_channel/' , views.get_new_channel),
     path('studio/' , views.studio),
     path('new_state/' , views.create_new_state),
-    path("new_state/get_new_state/", views.get_new_state),
     path("state/" , views.view_state),
     path('popular/' , views.states_list),
     path('channels/' , views.all_channel),
     path('channel/' , views.channel),
     path('api/' , include(api)),
     path('post_comment/', views.post_comment),
+    path("upload_image/", views.up_img)
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

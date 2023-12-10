@@ -1,3 +1,4 @@
+from django.core.files.storage import default_storage
 from django.shortcuts import *
 from django.http import *
 from django.contrib.auth.models import User
@@ -132,30 +133,36 @@ def pnf(request , exception):
 
 
 def set_channel(request):
-	if request.user.is_authenticated:
-		id_user = request.user.id
-		#return render(request, "info.html", context={"content": id_user})
-		result = execcute(f"SELECT * FROM blog_blog WHERE author_id = '{id_user}'")
+	if request.method == "GET":
+		if request.user.is_authenticated:
+			id_user = request.user.id
+			#return render(request, "info.html", context={"content": id_user})
+			result = execcute(f"SELECT * FROM blog_blog WHERE author_id = '{id_user}'")
 
-		if len(result) != 0: 
-			return render(request, "info.html", context={"content": "You channel is already exists"})
+			if len(result) != 0: 
+				return render(request, "info.html", context={"content": "You channel is already exists"})
+			else:
+				return render(request , "create_channel.html")
+
+
+
+
 		else:
-			return render(request , "create_channel.html")
-
-
-
+			return redirect('/auth')
+	if request.method == "POST":
+		about = request.POST.get('about')
+		name_of_blog = request.POST.get("name_of_blog")
+		theme_of_channel = request.POST.get('theme')
+		logo = request.FILES['photo']
+		blog.objects.create(blog_id = gri(), themes = theme_of_channel , 
+								about=about , cover=logo , author_id = request.user.id)
+		return redirect("/")
 
 	else:
-		return redirect('/auth')
+		return render(request, "info.html", context={"content": 'HTTP 400 Bad request'})
 
-def get_new_channel(request):
-	about = request.POST.get('about')
-	name_of_blog = request.POST.get("name_of_blog")
-	theme_of_channel = request.POST.get('theme')
-	logo = request.FILES['photo']
-	blog.objects.create(blog_id = gri(), themes = theme_of_channel , 
-							about=about , cover=logo , author_id = request.user.id)
-	return redirect("/")
+
+
 
 def fuck_dogs(request):
 	h = blog.objects.get(blog_id=' f787kt')
@@ -166,83 +173,98 @@ def fuck_dogs(request):
 
 
 def studio(request):
-	if request.user.is_authenticated:
-		blogic = blog.objects.get(author_id = request.user.id)
+	try:
+		if request.user.is_authenticated:
+			blogic = blog.objects.get(author_id = request.user.id)
 
-		#getting list of states
-		list_of_states = states.objects.filter(blog_id=blogic.blog_id)
+			#getting list of states
+			list_of_states = states.objects.filter(blog_id=blogic.blog_id)
 
-		html_string = """ """
+			html_string = """ """
 
-		for i in list_of_states:
-			html_string += f"<p>{i.time_of_publicate}</p>"
-			html_string += f"<p>{i.topic}</p>"
-			html_string += f"<a href='http://127.0.0.1:8000/state/?id={i.state_id}'>{i.text[:len(i.text)//8]}...</a> <p>"
+			for i in list_of_states:
+				html_string += f"<p>{i.time_of_publicate}</p>"
+				html_string += f"<p>{i.topic}</p>"
+				html_string += f"<a href='http://127.0.0.1:8000/state/?id={i.state_id}'>{i.text[:len(i.text)//8]}...</a> <p>"
 
-		html_string += "<a href='http://127.0.0.1:8000/new_state'>Создать статью</a>"
+			html_string += "<a href='http://127.0.0.1:8000/new_state'>Создать статью</a>"
 
-		safe_html = mark_safe(html_string)
-
-
-		
+			safe_html = mark_safe(html_string)
 
 
+			
 
 
-		return render(request , "studio.html" , context={"name_of_blog":blogic.blog_id , 
-														"usr":request.user.username,
-														"theme_blog":blogic.themes,
-														"img_url":f"/media/{blogic.cover}",
-														"blog_description":blogic.about,
-														"states_html":safe_html})
-	else:
-		return redirect("http://127.0.0.1:8000/auth/")
+
+
+			return render(request , "studio.html" , context={"name_of_blog":blogic.blog_id , 
+															"usr":request.user.username,
+															"theme_blog":blogic.themes,
+															"img_url":f"/media/{blogic.cover}",
+															"blog_description":blogic.about,
+															"states_html":safe_html})
+		else:
+			return redirect("http://127.0.0.1:8000/auth/")
+	except:
+		return redirect("set_channel/")
 
 def create_new_state(request):
-	if  not request.user.is_authenticated:
-		return redirect("/")
+	if request.method == "GET":
+		if  not request.user.is_authenticated:
+			return redirect("/")
+		else:
+			return render(request , "create_state.html")	
+	if request.method == "POST":
+		#getting data from request
+		name_of_state = request.POST.get("name_of_state")
+		text_of_state = request.POST.get("text_of_state")
+
+		#getting data from Db
+		mother_blog = blog.objects.get(author_id = request.user.id)
+		blog_id = mother_blog.blog_id
+
+		#inserting data to Db
+
+		states.objects.create(
+								time_of_publicate = datetime.datetime.now().strftime("%Y-%m-%d"),
+								topic = name_of_state,
+								text = text_of_state,
+								blog_id  = blog_id,
+								state_id=gri(),
+							)
+		return redirect("/studio")
 	else:
-		return render(request , "create_state.html")	
+		return render(request, "info.html", context={"content": 'HTTP 400 Bad request'})
 
-def get_new_state(request):
-
-	#getting data from request
-	name_of_state = request.POST.get("name_of_state")
-	text_of_state = request.POST.get("text_of_state")
-
-	#getting data from Db
-	mother_blog = blog.objects.get(author_id = request.user.id)
-	blog_id = mother_blog.blog_id
-
-	#inserting data to Db
-
-	states.objects.create(
-							time_of_publicate = datetime.datetime.now().strftime("%Y-%m-%d"),
-							topic = name_of_state,
-							text = text_of_state,
-							blog_id  = blog_id,
-							state_id=gri(),
-						)
-	return redirect("/studio")
 
 def view_state(request):
-	try:
-		state = request.GET.get("id")
+	pass
+	# try:
+	# 	state = request.GET.get("id")
 
-		state = states.objects.get(state_id=state)
 
-		mother_blog = blog.objects.get(blog_id = state.blog_id)
+	# 	state = states.objects.get(state_id=state)
 
-		state.views += 1
+	# 	mother_blog = blog.objects.get(blog_id = state.blog_id)
 
-		state.save()
+	# 	author = mother_blog.author
 
-		return render(request , "state.html" , context={
-			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
-			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
+	# 	state.views += 1
 
-	except:
-		return render(request, "state.html", context={"topic": "Oops... this article doesn't exist!", "text": "So create it yourself! It's quite easy!",})
+	# 	state.save()
+
+	# 	if author == request.user.username:
+	# 		return render(request , "state.html" , context={
+	# 		"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+	# 		"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id"),
+	# 		"del":"<button onclick='fetch('http://127.0.0.1:8000/upload_image', {method: "POST", body: formData});'>удалить статью</button>"})
+	# 	else:
+	# 		return render(request , "state.html" , context={
+	# 			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+	# 			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
+
+	# except:
+	# 	return render(request, "state.html", context={"topic": "Oops... this article doesn't exist!", "text": "So create it yourself! It's quite easy!",})
 
 def states_list(request):
 	list_of_states = execcute("SELECT * FROM blog_states ORDER BY views")
@@ -315,3 +337,10 @@ def post_comment(request):
 
 	else:
 		return JsonResponse(["400"], status=400)
+
+
+def up_img(request):
+	logo = request.FILES['photo']
+	file_name = default_storage.save(logo.name, logo)
+	return JsonResponse(["200"], safe=False)
+
