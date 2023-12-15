@@ -144,9 +144,6 @@ def set_channel(request):
 			else:
 				return render(request , "create_channel.html")
 
-
-
-
 		else:
 			return redirect('/auth')
 	if request.method == "POST":

@@ -1,74 +1,77 @@
-   #text-style {
-      text-align: left;
-      margin: 10px;
-      overflow: auto;
-      font-family: monospace;
-   }
+#text-style {
+    text-align: left;
+    margin: 10px;
+    overflow: auto;
+    font-family: monospace;
+}
 
-   * {
-      margin: 0;
-      padding: 0;
-      text-decoration: none;
-   }
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
 
-   .header {
-      background: #42aaff;
-      border-bottom: 1px solid gray;
-      height: 80px;
-   }
+.header {
+    background: #42aaff;
+    border-bottom: 1px solid gray;
+    height: 80px;
+}
 
-   .header p {
-      color: white;
-      font-size: 45px;
-      padding: 5px;
-   }
+.header p {
+    color: white;
+    font-size: 45px;
+    padding: 5px;
+}
 
-   .header a {
-      color: white;
-      text-align: right;
-   }
+.header a {
+    color: white;
+    text-align: right;
+}
 
-   #sidebar {
-      margin-right: 10px;
-      margin-top: 50px;
-      background-color: #e8e8e8;
-      color: black;
-      float: right;
-      height: 280px;
-      width: 280px;
-   }
+#sidebar {
+    margin-right: 10px;
+    margin-top: 50px;
+    background-color: #e8e8e8;
+    color: black;
+    float: right;
+    height: 280px;
+    width: 280px;
+}
 
-   #main {
-      min-height: 1000px;
-      margin-bottom: 10px;
-      background-color: #e8e8e8;
-      margin-right: 10px;
-      margin-left: 10px;
-      margin-top: 10px;
-      width: 70%;
-      height: 100%;
-   }
+#main {
+    min-height: 1000px;
+    margin-bottom: 10px;
+    background-color: #e8e8e8;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 70%;
+    height: 100%;
+}
 
-   @media only screen and (max-width: 1000px) {
-      #sidebar {
-         display: none;
-      }
-      #links234 {
-         display: none;
-      }
-   }
+@media only screen and (max-width: 1000px) {
+    #sidebar {
+        display: none;
+    }
+    #links234 {
+        display: none;
+    }
+}
 
-   .in {
-      resize: none;
-      width: 250px;
-      height: 300px;
-   }
-
+.in {
+    resize: none;
+    width: 250px;
+    height: 300px;
+}
 
 #editor {
-   border:white 1px solid;
-   max-height: 100%;
-   height: 100vh;
-   max-width: 100%;
-   width: 100%;
+    height: 100vh;
+    position: absolute;
+    left: 10px;
+    width: 50hv;
+    align-self: center;
+    overflow-y: hidden;
+    border-radius: 100px;
+    -moz-border-radius: 100px;
+    -webkit-border-radius: 100px;
 }
