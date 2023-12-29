@@ -1,3 +1,5 @@
+#  TODO CHANGE 127.0.0.1:8000 to static web server
+
 from django.core.files.storage import default_storage
 from django.shortcuts import *
 from django.http import *
@@ -16,11 +18,30 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import datetime
 from django.shortcuts import redirect 
+import json
+
+
+def is_not_his_state(ids=None, usr=None):
+	print(ids)
+	print(usr)
+	if ids is None:
+		return True
+	else:
+		blg = blog.objects.get(author=usr)
+		try:
+			state = states.objects.get(state_id=ids, blog_id=blg.blog_id)
+			return False
+		except Exception as e:
+			print(e)
+			return True
+
+
+
 
 def gcd():
     now = datetime.datetime.now()
-    formatted_date = now.strftime("%Y:%m:%d")
-    return str(formatted_date)
+    formatted_date = now.strftime("%Y-%m-%d")
+    return formatted_date
 
 #api views
 @api_view(['GET', 'POST'])
@@ -136,6 +157,7 @@ def set_channel(request):
 	if request.method == "GET":
 		if request.user.is_authenticated:
 			id_user = request.user.id
+			print(f'aaaaaaaaaaaa {id_user}')
 			#return render(request, "info.html", context={"content": id_user})
 			result = execcute(f"SELECT * FROM blog_blog WHERE author_id = '{id_user}'")
 
@@ -151,8 +173,9 @@ def set_channel(request):
 		name_of_blog = request.POST.get("name_of_blog")
 		theme_of_channel = request.POST.get('theme')
 		logo = request.FILES['photo']
-		blog.objects.create(blog_id = gri(), themes = theme_of_channel , 
+		blg = blog.objects.create(blog_id = gri(), themes = theme_of_channel , 
 								about=about , cover=logo , author_id = request.user.id)
+		blg.save()
 		return redirect("/")
 
 	else:
@@ -206,62 +229,97 @@ def studio(request):
 		return redirect("set_channel/")
 
 def create_new_state(request):
-	if request.method == "GET":
-		if  not request.user.is_authenticated:
-			return redirect("/")
-		else:
-			return render(request , "create_state.html")	
-	if request.method == "POST":
-		#getting data from request
-		name_of_state = request.POST.get("name_of_state")
-		text_of_state = request.POST.get("text_of_state")
+	try:
+		if request.method == "GET":
+			foo = is_not_his_state(request.GET.get("id"), request.user)
+			if foo:
+				return redirect("/")
+			else:
+				return render(request , "create_state.html")	
+		if request.method == "POST":
 
-		#getting data from Db
-		mother_blog = blog.objects.get(author_id = request.user.id)
-		blog_id = mother_blog.blog_id
+			#getting json data from request
+			dat = json.loads(request.body)
+		
+			data = dat["state_data"]
+			token = dat["token"]
+			top = dat['topic']
 
-		#inserting data to Db
+			print(data)
+			print(token)
+			print(top)
 
-		states.objects.create(
-								time_of_publicate = datetime.datetime.now().strftime("%Y-%m-%d"),
-								topic = name_of_state,
-								text = text_of_state,
-								blog_id  = blog_id,
-								state_id=gri(),
-							)
-		return redirect("/studio")
+
+
+			mother_blog = blog.objects.get(author=request.user)
+
+
+
+			try:
+				#queryset is not empty
+				lst = states.objects.get(state_id=token)
+				lst.time_of_publicate = gcd()
+				lst.text = data
+				lst.topic = top
+				lst.save()
+				return JsonResponse(["201"], status=201, safe=False)
+
+
+			except states.DoesNotExist:
+				#queryset is empty
+				state = states.objects.create(state_id=token,
+									blog_id = mother_blog.blog_id,
+									time_of_publicate=gcd(),
+									text = data,
+									topic = top)
+				return JsonResponse(['OK'], status=201, safe=False)
+
+
+
+	except Exception as error:
+		print(error)
+		return JsonResponse(json.dumps(
+			{
+				"message":"500 Internal Server Error",
+				"error":str(error)	
+			}
+				), status=500, safe=False)
+		
+
+
+
 	else:
-		return render(request, "info.html", context={"content": 'HTTP 400 Bad request'})
+		return render(request, "info.html", context={"content": 'HTTP 400 Bad request'}, status=400)
 
 
 def view_state(request):
-	pass
-	# try:
-	# 	state = request.GET.get("id")
+	try:
+		state = request.GET.get("id")
 
 
-	# 	state = states.objects.get(state_id=state)
+		state = states.objects.get(state_id=state)
 
-	# 	mother_blog = blog.objects.get(blog_id = state.blog_id)
+		mother_blog = blog.objects.get(blog_id = state.blog_id)
 
-	# 	author = mother_blog.author
+		author = mother_blog.author
 
-	# 	state.views += 1
+		state.views += 1
 
-	# 	state.save()
+		state.save()
 
-	# 	if author == request.user.username:
-	# 		return render(request , "state.html" , context={
-	# 		"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
-	# 		"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id"),
-	# 		"del":"<button onclick='fetch('http://127.0.0.1:8000/upload_image', {method: "POST", body: formData});'>удалить статью</button>"})
-	# 	else:
-	# 		return render(request , "state.html" , context={
-	# 			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
-	# 			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
+		if not is_not_his_state(state.state_id, request.user):
+			print("regvre")
+			return render(request , "state.html" , context={
+			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id") 
+			, "edt":f"<a href='http://127.0.0.1:8000/new_state/?id={state}'>edit state</a>"})
+		else:
+			return render(request , "state.html" , context={
+				"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+				"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
 
-	# except:
-	# 	return render(request, "state.html", context={"topic": "Oops... this article doesn't exist!", "text": "So create it yourself! It's quite easy!",})
+	except:
+		return render(request, "state.html", context={"topic": "Oops... this article doesn't exist!", "text": "So create it yourself! It's quite easy!",})
 
 def states_list(request):
 	list_of_states = execcute("SELECT * FROM blog_states ORDER BY views")
@@ -310,6 +368,7 @@ def channel(request):
 	safe_html = mark_safe(html_string)
 
 
+
 	
 
 
@@ -340,4 +399,38 @@ def up_img(request):
 	logo = request.FILES['photo']
 	file_name = default_storage.save(logo.name, logo)
 	return JsonResponse(["200"], safe=False)
+
+
+
+#NOTE creating API by DRF is too difficult
+
+def view_state_api(request):
+	if request.method == "POST":
+		# try:
+		dat = json.loads(request.body)
+		tok = dat["tok"]
+
+		print(f'[*]:{tok}')
+
+		try:
+			queryset = states.objects.get(state_id=tok)
+
+			return JsonResponse([
+
+			queryset.topic,
+			queryset.text,
+			
+	
+
+
+			], safe = False, status=200)
+		except states.DoesNotExist as e:
+			return JsonResponse(['404', str(e)], status=404, safe=False)
+		# except Exception as e:
+		# 	return JsonResponse([str(e) , "404"], status=400, safe=False)
+
+	else:
+		return JsonResponse(['400'], status=400, safe=False)
+
+
 

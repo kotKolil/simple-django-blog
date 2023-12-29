@@ -24,7 +24,7 @@ class states(models.Model):
 	topic = models.CharField(max_length=23 , help_text="название статьи")
 	text = models.CharField(max_length=7777 , help_text="текст статьи")
 
-
+ 
 
 	def __str__(self):
 

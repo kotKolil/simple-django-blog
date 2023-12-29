@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="utf-8">
-        <title>Editor State</title>
-        <link rel="stylesheet" href="http://127.0.0.1:8000/static/main.css" />
-        <script type="text/javascript" src="http://127.0.0.1:8000/static/main.js"></script>
-    </head>
-    <body>
-        <div class="header">
-
-            <p>Simple Djngo Blog</p>
-            <div id="links234">
-            <a href="http://127.0.0.1:8000/reg/" align="right">Registration | </a>
-            <a href="http://127.0.0.1:8000/auth/" align="right">Log in |</a>
-            <a href="http://127.0.0.1:8000//logout" align="right">Log out |</a>
-            <a href="http://127.0.0.1:8000">Main Page |</a>
-            <a href="http://127.0.0.1:8000/popular/">Popular states |</a>
-            <a href="http://127.0.0.1:8000/channels/">all channels |</a>
-            <a href="http://127.0.0.1:8000/studio/">studio |</a>
-
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Editor State</title>
+    <link rel="stylesheet" href="http://127.0.0.1:8000/static/main.css" />
+</head>
+<body>
+    <script src="http://127.0.0.1:8000/static/main.js" charset="utf-8"></script>
+    <div class="header">
+        <p>Simple Django Blog</p>
+        <div class="nav-links">
+            <a href="http://127.0.0.1:8000/reg/">Registration</a>
+            <a href="http://127.0.0.1:8000/auth/">Log in</a>
+            <a href="http://127.0.0.1:8000/logout">Log out</a>
+            <a href="http://127.0.0.1:8000">Main Page</a>
+            <a href="http://127.0.0.1:8000/popular/">Popular states</a>
+            <a href="http://127.0.0.1:8000/channels/">All channels</a>
+            <a href="http://127.0.0.1:8000/studio/">Studio</a>
         </div>
-        <img src="http://127.0.0.1:8000/static/plus.jpeg" style="
+    </div>
 
-        width:30px;
-        height:30px;
-        position: fixed;
-        left: 1px;
-        top: 70vh;
+    <div>
+        <script src="http://127.0.0.1:8000/static/main.js" charset="utf-8">
+            
+            document.addEventListener('keydown', function(event) {
+                if (event.ctrlKey && event.key === 's') {
+                    // cancel default action
+                    event.preventDefault();
+                    //run my code
+                    save_state();
+            
+                }
+            });
+        </script>
 
+        <img src="http://127.0.0.1:8000/static/plus.jpeg" id="insert_icon" onclick="insert_photo();">
+    </div>
 
-        " onclick='
-elem = document.getElementById("editor");
-var input = document.createElement("input");
-input.setAttribute("id", "file_upd");
-input.setAttribute("accept", "image/png, image/gif, image/jpeg");
-input.type = "file";
-input.click()
-input.onchange = function() {
-    var photo = input.files[0];
-    var formData = new FormData();
-    formData.append("photo", photo);
-    fetch("http://127.0.0.1:8000/upload_image/", { method: "POST", body: formData });
-    elem.innerHTML += `<img src="http://127.0.0.1:8000/media/${photo.name}"></img>`
+    <div contentEditable="true" id="topic">Заголовок</div>
+    <div class="editor-wrapper">
+        
+        <div contentEditable="true" id="editor">Текст статьи</div>
+    </div>
 
-
-};
-'>
-
-
-        <div contentEditable="true" id="editor"></div>
-    </body>
+    <div>
+        <script src="http://127.0.0.1:8000/static/main.js" charset="utf-8"></script>
+        <button id="save" onclick="save_state();">
+            publicate
+        </button>
+    </div>
+    <script>
+        edit_state_data();
+    </script>
+</body>
 </html>
   

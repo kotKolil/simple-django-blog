@@ -10,10 +10,10 @@
   </p>
   <hr>
   <H3>Комментари</H3>
-  {{del}}
-  <script type="text/javascript">
+  {{edt | safe}}
+  <script type="text/">
   	const url = new URL(window.location.href);
-  	state_id = url.searchParams.get('id');
+  	state_id = url.searchParams.javascriptget('id');
   	comment_block(state_id);
 
   </script>
@@ -23,7 +23,7 @@
   <form method="post" action="http://127.0.0.1:8000/post_comment/">
         {% csrf_token %}
         <p>write your comment<br> <input name="text" /></p>
-        <input type="hidden" name="state_id" value={{st_id}}>
+        <input type="hidden" name="state_id" value={{st_id}} max=32>
         <input type="submit" value="Send" />
   </form>
 
