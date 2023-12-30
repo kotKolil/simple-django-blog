@@ -4,12 +4,13 @@
   <img src='http://127.0.0.1:8000/media/{{img}}' width='30px' height="30px">
   <p>{{author}}</p>
   <span><p>{{date}}</p> <p>{{views}} views</p></span>
-  <h3>{{topic}}</h3>
-  <p id="text-style">
-    {{text}}
-  </p>
+  <h3>{{topic | safe}}</h3>
+  <div id="text-style">
+    {{text | safe}}
+  </div>
   <hr>
   <H3>Комментари</H3>
+  
   {{edt | safe}}
   <script type="text/">
   	const url = new URL(window.location.href);
@@ -20,11 +21,12 @@
 
 
   <div id = "block_comments">
-  <form method="post" action="http://127.0.0.1:8000/post_comment/">
-        {% csrf_token %}
-        <p>write your comment<br> <input name="text" /></p>
-        <input type="hidden" name="state_id" value={{st_id}} max=32>
-        <input type="submit" value="Send" />
-  </form>
+        <p>write your comment<br> 
+        <input name="text" id="text"/></p>
+        <input type="hidden" name="state_id" value={{st_id}} id="state_id" max=32>
+        <button onclick='post_comment();'>Post comment</button>
+
+</div>
+
 
 {% endblock content %}

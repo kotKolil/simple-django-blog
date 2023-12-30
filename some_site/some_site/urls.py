@@ -10,7 +10,7 @@ from django.conf.urls.static import static
 handler404 = "blog.views.pnf"
 
 api = [
-    path('comment_api/', views.comment_api, name='comment_api'),
+    path('comment/', views.comment_api, name='comment_api'),
     path('state/', views.view_state_api)
 ]
 
@@ -32,7 +32,8 @@ urlpatterns = [
     path('channel/' , views.channel),
     path('api/' , include(api)),
     path('post_comment/', views.post_comment),
-    path("upload_image/", views.up_img)
+    path("upload_image/", views.up_img),
+    path("del_state/", views.del_state),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

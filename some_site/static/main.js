@@ -36,10 +36,10 @@ function save_state() {
     var elem = document.getElementById("editor");
     var top = document.getElementById("topic");
 
-    if (getUrlParameter('id') == "") {
+    if (getUrlParameter('id') == null) {
         //we are not editing state
 
-        var tok = generateToken();
+        const tok = generateToken();
         console.log(tok);
 
         fetch("http://127.0.0.1:8000/new_state/", {
@@ -94,7 +94,7 @@ function save_state() {
 
 
 
-function insertPhoto() {
+function insert_photo() {
     var elem = document.getElementById("editor");
     var input = document.createElement("input");
     input.setAttribute("id", "file_upd");
@@ -111,7 +111,6 @@ function insertPhoto() {
                     elem.innerHTML += `<img src="http://127.0.0.1:8000/media/${photo.name}" style="width:100vh;height:100vh;">`;
                 }
             });
-        elem.innerHTML += `<img src="http://127.0.0.1:8000/media/${photo.name}" style="width:100vh;height:100vh;">`;
 
     }
 }
@@ -144,4 +143,27 @@ async function edit_state_data() {
             text.innerHTML = json[1];
         }
     }
+}
+
+async function post_comment() {
+    console.log("sending comment");
+    var text_elem = document.getElementById("text").value;
+    var id_elem = document.getElementById("state_id").value;
+    console.log(text_elem);
+    console.log(id_elem);
+
+    const request = await fetch("http://127.0.0.1:8000/api/state/", {
+        method: "POST",
+        body: JSON.stringify({
+            text: text_elem,
+            state_id: id_elem,
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    });
+
+    const data = await request.json;
+    console.log(data);
+
 }

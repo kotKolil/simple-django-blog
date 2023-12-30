@@ -1,0 +1,17 @@
+version: 3
+services:
+  server:
+    build: some_site/
+    ports:
+      - 8000:8000
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ldxi
+      POSTGRES_PASSWORD: 14037176
+      POSTGRES_DB: data_base

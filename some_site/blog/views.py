@@ -47,15 +47,19 @@ def gcd():
 @api_view(['GET', 'POST'])
 def comment_api(request):
 	if request.method == "GET":
-		try:
-			state_id = request.GET["id"]
-			comment = comments.objects.filter(state_id=state_id)
-			dat = comment_api_ser(comment , many=True)
-			return Response(dat.data)
-		except Exception as e:
-			return Response([str(e)], status=400)
+		pass
 
-
+	elif request.method == "POST":
+		dat = json.loads(request.body)
+		state_id = dat["state_id"]
+		text  = dat["text"]
+		usr = request.user.username
+		date = gcd()
+		comments.objects.create(state_id=state_id,
+						  		user=usr,
+								date=gcd(),
+								date=date)
+		return JsonResponse(["200"], safe=False)
 	else:
 		return Response(["400"], status=400)
 
@@ -231,11 +235,11 @@ def studio(request):
 def create_new_state(request):
 	try:
 		if request.method == "GET":
-			foo = is_not_his_state(request.GET.get("id"), request.user)
-			if foo:
-				return redirect("/")
-			else:
-				return render(request , "create_state.html")	
+			# foo = is_not_his_state(request.GET.get("id"), request.user)
+			# if foo:
+				# return redirect("/")
+			# else:
+			return render(request , "create_state.html")	
 		if request.method == "POST":
 
 			#getting json data from request
@@ -312,10 +316,11 @@ def view_state(request):
 			return render(request , "state.html" , context={
 			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
 			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id") 
-			, "edt":f"<a href='http://127.0.0.1:8000/new_state/?id={state}'>edit state</a>"})
+			, "edt":f"""<a href='http://127.0.0.1:8000/new_state/?id={state}'>edit state</a>
+						<a href='http://127.0.0.1:8000/del_state/?id={state}'>delete state</a>"""})
 		else:
 			return render(request , "state.html" , context={
-				"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+				"topic":state.topic , "text":mark_safe(state.text) , "date":state.time_of_publicate, "views":state.views , 
 				"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
 
 	except:
@@ -434,3 +439,12 @@ def view_state_api(request):
 
 
 
+def del_state(request):
+	foo = is_not_his_state(request.GET.get("id"), request.user)
+	if foo:
+		return redirect("/")
+	else:
+		lst = states.objects.get(state_id=request.GET.get("id"))
+		lst.delete()
+		return redirect("/studio")
+		
