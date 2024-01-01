@@ -1,4 +1,4 @@
-
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import admin
 from django.urls import *
 from blog import views
@@ -10,8 +10,8 @@ from django.conf.urls.static import static
 handler404 = "blog.views.pnf"
 
 api = [
-    path('comment/', views.comment_api, name='comment_api'),
-    path('state/', views.view_state_api)
+    path('comment/', views.comment_api),
+    path('state/', views.view_state_api),
 ]
 
 urlpatterns = [

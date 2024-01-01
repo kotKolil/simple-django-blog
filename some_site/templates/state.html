@@ -21,11 +21,17 @@
 
 
   <div id = "block_comments">
-        <p>write your comment<br> 
-        <input name="text" id="text"/></p>
-        <input type="hidden" name="state_id" value={{st_id}} id="state_id" max=32>
-        <button onclick='post_comment();'>Post comment</button>
-
+    <script >
+      insert_comments();
+    </script>
+    <p>write your comment</p>
+    {% csrf_token %}
+    <form id="form">
+      <input name="text" id="text"/>
+      <input type="hidden" name="state_id" value="{{st_id}}" id="state_id" max="32">
+      
+    </form>
+    <button onclick="post_comment();">Post comment</button>
 </div>
 
 

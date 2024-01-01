@@ -137,7 +137,7 @@ async function edit_state_data() {
 
         if (response.ok) {
             console.log('editing the page');
-            const json = await response.json();
+            var json = await response.json();
             console.log(json);
             topic.innerHTML = json[0];
             text.innerHTML = json[1];
@@ -145,25 +145,49 @@ async function edit_state_data() {
     }
 }
 
+
 async function post_comment() {
     console.log("sending comment");
-    var text_elem = document.getElementById("text").value;
-    var id_elem = document.getElementById("state_id").value;
+    const text_elem = document.getElementById("text").value;
+    const id_elem = document.getElementById("state_id").value;
     console.log(text_elem);
     console.log(id_elem);
 
-    const request = await fetch("http://127.0.0.1:8000/api/state/", {
-        method: "POST",
-        body: JSON.stringify({
-            text: text_elem,
-            state_id: id_elem,
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    });
+    if (text_elem) {
 
-    const data = await request.json;
+
+        const request = await fetch("http://127.0.0.1:8000/api/comment/", {
+            method: "POST",
+            body: JSON.stringify({
+                state_id: getUrlParameter("id"),
+                text: text_elem,
+                state_id: id_elem,
+            }),
+
+        });
+
+        const data = await request.json();
+        console.log("fcwecwevgew");
+        console.log(request);
+        window.location.reload();
+    } else {
+        alert("комментарий не может быть пустым");
+    }
+}
+
+
+async function insert_comments() {
+    console.log("refwqfwf");
+    const comment_block = document.getElementById("block_comments");
+    console.log(comment_block);
+    const state_id = getUrlParameter("id");
+    var response = await fetch(`http://127.0.0.1:8000/api/comment/?id=${state_id}`);
+    var data = await response.json();
     console.log(data);
-
+    for (var i = 0; i < data.length; i++) {
+        var user = data[i].user;
+        var date = data[i].date;
+        var text = data[i].text;
+        comment_block.innerHTML += `<br>${user}   ${date} <br> ${text} <br>`;
+    }
 }

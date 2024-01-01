@@ -43,30 +43,6 @@ def gcd():
     formatted_date = now.strftime("%Y-%m-%d")
     return formatted_date
 
-#api views
-@api_view(['GET', 'POST'])
-def comment_api(request):
-	if request.method == "GET":
-		pass
-
-	elif request.method == "POST":
-		dat = json.loads(request.body)
-		state_id = dat["state_id"]
-		text  = dat["text"]
-		usr = request.user.username
-		date = gcd()
-		comments.objects.create(state_id=state_id,
-						  		user=usr,
-								date=gcd(),
-								date=date)
-		return JsonResponse(["200"], safe=False)
-	else:
-		return Response(["400"], status=400)
-
-
-	I
-
-
 
 #normal views
 
@@ -393,7 +369,7 @@ def post_comment(request):
 		comments.objects.create(state_id=str(st_id) , user = request.user.username , 
 			date = datetime.datetime.now().strftime("%Y-%m-%d"), text= text )
 
-		return redirect(f"http://127.0.0.1:8000/state/?id={st_id}")
+		return JsonResponse(["200"], status=300)
 
 
 	else:
@@ -406,7 +382,7 @@ def up_img(request):
 	return JsonResponse(["200"], safe=False)
 
 
-
+#NOTE This is API views
 #NOTE creating API by DRF is too difficult
 
 def view_state_api(request):
@@ -438,7 +414,6 @@ def view_state_api(request):
 		return JsonResponse(['400'], status=400, safe=False)
 
 
-
 def del_state(request):
 	foo = is_not_his_state(request.GET.get("id"), request.user)
 	if foo:
@@ -448,3 +423,28 @@ def del_state(request):
 		lst.delete()
 		return redirect("/studio")
 		
+def comment_api(request):
+	if request.method == "GET":
+		state_id = request.GET.get("id")
+		query_set = comment_api_ser(comments.objects.filter(state_id=state_id), many=True)
+		if query_set.is_valid:
+			return JsonResponse(query_set.data, safe=False)
+
+	elif request.method == "POST":
+		if request.user.is_authenticated:
+			dat = json.loads(request.body)
+			print(dat)
+			state_id = dat[f"state_id"]
+			text  = dat["text"]
+			usr = request.user.username
+			date = gcd()
+			comments.objects.create(state_id=state_id,
+						   			text=text,
+									user=usr,
+									date=gcd(),
+			)
+			return JsonResponse(["200"], safe=False)
+		else:
+			return JsonResponse(["401"], status=401)
+	else:
+		return JsonResponse(["400"], status=400)
