@@ -4,6 +4,7 @@ from django.urls import *
 from blog import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth import views as auth_views
 
 
 
@@ -12,16 +13,13 @@ handler404 = "blog.views.pnf"
 api = [
     path('comment/', views.comment_api),
     path('state/', views.view_state_api),
+    path('react/', views.reactions_api),
 ]
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     path("",views.main),
-    path('reg/' , views.reg),
-    path('reg/get_reg/' , views.get_reg),
-    path("auth/" , views.auth),
-    path("auth/get_auth/" , views.get_auth),
-    path("logout/", views.lg),
     path("ish_kab/", views.ish_kab), 
     path('set_channel/' , views.set_channel),
     path('studio/' , views.studio),
@@ -34,6 +32,11 @@ urlpatterns = [
     path('post_comment/', views.post_comment),
     path("upload_image/", views.up_img),
     path("del_state/", views.del_state),
+
+
+    #authentication system
+    path("reg/", views.reg),
+    path('accounts/', include('django.contrib.auth.urls')),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

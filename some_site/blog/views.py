@@ -1,4 +1,3 @@
-#  TODO CHANGE 127.0.0.1:8000 to static web server
 
 from django.core.files.storage import default_storage
 from django.shortcuts import *
@@ -18,7 +17,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import datetime
 from django.shortcuts import redirect 
+from django.conf import settings
 import json
+
+#TODO change localhost to variable
+#Domain name of your web server
+DOMAIN = settings.DOMAIN_URI
+
 
 
 def is_not_his_state(ids=None, usr=None):
@@ -57,63 +62,41 @@ def execcute(query):
 		cursor.execute(query)
 		rows = cursor.fetchall() #get all strings of answer
 		return rows 
+	
+def reg(request):
+  if request.method == "GET":
+    if not request.user.is_authenticated:
+      return render(request, 'reg.html', status=200)
+    else:
+      return redirect("/")
+  elif request.method == "POST":
+    lg = request.POST.get("login")
+    mail = request.POST.get("email")
+    pswd = request.POST.get('password')
+    try:
+      usr = User.objects.create_user(username=lg, email=mail, password=pswd)
+      usr.save()
+      userok = authenticate(username=lg, password=pswd)
+      login(request, userok)  
+      return redirect("/")
+    except Exception as e:
+      return render(request, "info.html", context={"content": str(e)})
+
 
 def main(request):
 
-	list_of_states = execcute("SELECT * FROM blog_states ORDER BY time_of_publicate LIMIT 5")
+	list_of_states = execcute("SELECT * FROM blog_states ORDER BY time_of_publication LIMIT 5")
 
 	html_string = """ """
 	for i in list_of_states:
 		html_string += f"<h3>{i[6]}</h3>"
-		html_string += f'<a href="http://127.0.0.1:8000/state/?id={i[1]}"> {i[len(i)-1][:len(i[len(i)-1])//4]} ... </a>'
+		html_string += f'<a href="http://{DOMAIN}/state/?id={i[1]}"> {i[len(i)-1][:len(i[len(i)-1])//4]} ... </a>'
 
 
 
 	return render(request , "main.html" , context={"content":mark_safe(html_string)})
 	
-def reg(request):
-	if request.user.is_authenticated:
-		return redirect('/')
-	else:
-		return render(request , "reg.html")
 
-def get_reg(request):
-    lg = request.POST.get("login")
-    pswd = request.POST.get('pswd')
-    mail = request.POST.get('email')
-    first = request.POST.get('first')
-    second = request.POST.get('second')
-  
-    if User.objects.filter(username=lg , email=mail ).exists():
-        return render(request, "base.html" , context={'content':'Such user already exists in the system.'})
-  
-    else:
-        user = User.objects.create_user(lg, mail, pswd)
-        user.first_name = first
-        user.last_name = second
-        user.save()
-        login(request, user)
-        return redirect('/')
-
-def auth(request):
-	if not(request.user.is_authenticated):
-		return render(request , "auth.html")
-	else:
-		return redirect("http://127.0.0.1:8000/")
-
-def get_auth(request):
-  usr = request.POST.get("login")
-  pswd = request.POST.get('pswd')
-  user = authenticate(request, username=usr, password=pswd)
-  if user is not None:
-    login(request, user) 
-    return redirect('/')
-  else:
-    return render(request, "info.html", context={"content": 'wrong user or login'})
-
-def lg(request):
-    logout(request)
-    return redirect('/')
 def ish_kab(request):
 	if request.user.is_authenticated:
 		return render(request, "ish_kab.html" , context={
@@ -183,11 +166,11 @@ def studio(request):
 			html_string = """ """
 
 			for i in list_of_states:
-				html_string += f"<p>{i.time_of_publicate}</p>"
+				html_string += f"<p>{i.time_of_publication}</p>"
 				html_string += f"<p>{i.topic}</p>"
-				html_string += f"<a href='http://127.0.0.1:8000/state/?id={i.state_id}'>{i.text[:len(i.text)//8]}...</a> <p>"
+				html_string += f"<a href='http://{DOMAIN}/state/?id={i.state_id}'>{i.text[:len(i.text)//8]}...</a> <p>"
 
-			html_string += "<a href='http://127.0.0.1:8000/new_state'>Создать статью</a>"
+			html_string += "<a href='http://{DOMAIN}/new_state'>Создать статью</a>"
 
 			safe_html = mark_safe(html_string)
 
@@ -204,9 +187,9 @@ def studio(request):
 															"blog_description":blogic.about,
 															"states_html":safe_html})
 		else:
-			return redirect("http://127.0.0.1:8000/auth/")
+			return redirect(f"http://{DOMAIN}/auth/")
 	except:
-		return redirect("set_channel/")
+		return redirect(f"http://{DOMAIN}/set_channel/")
 
 def create_new_state(request):
 	try:
@@ -238,7 +221,7 @@ def create_new_state(request):
 			try:
 				#queryset is not empty
 				lst = states.objects.get(state_id=token)
-				lst.time_of_publicate = gcd()
+				lst.time_of_publication = gcd()
 				lst.text = data
 				lst.topic = top
 				lst.save()
@@ -249,7 +232,7 @@ def create_new_state(request):
 				#queryset is empty
 				state = states.objects.create(state_id=token,
 									blog_id = mother_blog.blog_id,
-									time_of_publicate=gcd(),
+									time_of_publication=gcd(),
 									text = data,
 									topic = top)
 				return JsonResponse(['OK'], status=201, safe=False)
@@ -290,13 +273,13 @@ def view_state(request):
 		if not is_not_his_state(state.state_id, request.user):
 			print("regvre")
 			return render(request , "state.html" , context={
-			"topic":state.topic , "text":state.text , "date":state.time_of_publicate, "views":state.views , 
+			"topic":state.topic , "text":state.text , "date":state.time_of_publication, "views":state.views , 
 			"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id") 
-			, "edt":f"""<a href='http://127.0.0.1:8000/new_state/?id={state}'>edit state</a>
-						<a href='http://127.0.0.1:8000/del_state/?id={state}'>delete state</a>"""})
+			, "edt":f"""<a href='http://{DOMAIN}/new_state/?id={state}'>edit state</a>
+						<a href='http://{DOMAIN}/del_state/?id={state}'>delete state</a>"""})
 		else:
 			return render(request , "state.html" , context={
-				"topic":state.topic , "text":mark_safe(state.text) , "date":state.time_of_publicate, "views":state.views , 
+				"topic":state.topic , "text":mark_safe(state.text) , "date":state.time_of_publication, "views":state.views , 
 				"author":mother_blog.name_of_blog, "img":f"{mother_blog.cover}", "st_id":request.GET.get("id")})
 
 	except:
@@ -308,7 +291,7 @@ def states_list(request):
 	html_string = """ """
 	for i in list_of_states:
 		html_string += f"<h3>{i[6]}</h3>"
-		html_string += f'<a href="http://127.0.0.1:8000/state/?id={i[1]}"> {i[len(i)-1][:len(i[len(i)-1])//4]} ... </a>'
+		html_string += f'<a href="http://{DOMAIN}/state/?id={i[1]}"> {i[len(i)-1][:len(i[len(i)-1])//4]} ... </a>'
 
 
 
@@ -320,10 +303,10 @@ def all_channel(request):
 	html_string = """ """
 	for i in list_of_channels:
 		html_string += f"<span><H1>{i[3]}</H1>"
-		html_string += f"<img src='http://127.0.0.1:8000/media/{i[4]}' width=20px , height=20px> </span>"
+		html_string += f"<img src='http://{DOMAIN}/media/{i[4]}' width=20px , height=20px> </span>"
 		html_string += f"<p>About: {i[3]}</p>"
 		html_string += f"<p>On theme: {i[2]}</p>"
-		html_string += f'<a href="http://127.0.0.1:8000/channel/?id={i[0]}" ,  color="white"> Go to channel </a> <hr>'
+		html_string += f'<a href="http://{DOMAIN}/channel/?id={i[0]}" ,  color="white"> Go to channel </a> <hr>'
 
 
 
@@ -342,7 +325,7 @@ def channel(request):
 	html_string = """ """
 
 	for i in list_of_states:
-		html_string += f"<p>{i.time_of_publicate}</p>"
+		html_string += f"<p>{i.time_of_publication}</p>"
 		html_string += f"<p>{i.topic}</p>"
 		html_string += f"<p>{i.text[:len(i.text)//8]}...</p>"
 
@@ -448,3 +431,50 @@ def comment_api(request):
 			return JsonResponse(["401"], status=401)
 	else:
 		return JsonResponse(["400"], status=400)
+
+
+def reactions_api(request):
+	if request.user.is_authenticated:
+		if request.method == "GET":
+			state_id = request.GET.get("id")
+			state = states.objects.get(state_id=state_id)
+			likes = state.likes
+			dislikes = state.dislikes
+			if request.GET.get("type") == "state":
+				return JsonResponse([len(likes), len(dislikes) ], safe=False)
+			elif request.GET.get("type") == "user":
+				l =  int(request.user.username in likes)
+				d =  int(request.user.username in likes)
+				return JsonResponse([str(l),str(d)], safe=False)
+			else:
+				return JsonResponse(["barabaraberere"], status=400, safe=False)
+			
+		elif request.method == "POST":
+			try:
+				dat = json.loads(request.body);
+				print(dat)
+				react = dat["react"]
+				state_id = dat["state_id"]
+				print(dat)
+				user  = request.user.username
+				state = states.objects.get(state_id=state_id)
+				if react == "like":
+					if user in state.dislikes:
+						state.dislikes.remove(user) 
+						state.likes.append(user)
+					elif user in state.likes:
+						state.likes.remove(user)
+				if react == "dislike":
+					if user in state.likes:
+						state.likes.remove(user) 
+						state.likes.append(user)
+					elif user in state.dislikes:
+						state.dislikes.remove(user)
+				return JsonResponse(["200"], status=200, safe=False)
+
+			except Exception as e:
+				return JsonResponse([str(e)], status=500, safe=False)
+
+
+		else:
+			return JsonResponse(['400'], status=400, safe=False)

@@ -1,5 +1,7 @@
 //TODO Change 127.0.0.1 to static ip of web server
 
+var reaction = "none"
+
 
 function getUrlParameter(name) {
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -14,6 +16,24 @@ function getUrlParameter(name) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+
+
+function send_react(rec) {
+
+
+    fetch("http://127.0.0.1:8000/api/react/", {
+        method: "POST",
+        body: JSON.stringify({
+            react: rec,
+            state_id: getUrlParameter("id"),
+        }),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    })
+
+
+}
 
 
 
@@ -160,6 +180,7 @@ async function post_comment() {
             method: "POST",
             body: JSON.stringify({
                 state_id: getUrlParameter("id"),
+
                 text: text_elem,
                 state_id: id_elem,
             }),

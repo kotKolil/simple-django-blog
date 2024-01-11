@@ -4,7 +4,8 @@ WORKDIR /app
 
 #this variable turn on/off debug mode 
 
-ENV debug = False
+ENV IS_DEBUG = "False"
+ENV DOMAIN_NAME = "127.0.0.1"
 
 COPY . .
 
