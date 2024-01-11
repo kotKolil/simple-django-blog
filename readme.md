@@ -6,8 +6,10 @@ Simple Django Blog by KotKolil
 
 <br>
 <p align="left">
+
+<H6>About</H6>
+
 I present to you my simple blog on the Django web framework. It allows users to register, create their own blog, view and comment on articles. I have used features provided by this framework, such as request handling, user authentication, and template rendering.
-</p>
 
 <H6>Starting server</H6>
 
@@ -19,6 +21,10 @@ To run the web server, you need to download this repository first. Before starti
 If you are using Docker, you need to modify the environment variables of your server container in the Dockerfile. You need to create tables in the database using "python manage.py migrate". Then, if necessary, create a superuser using "python manage.py createsuperuser". The server uses static files, which need to be collected using "python manage.py collectstatic". Finally, the server is launched with "python manage.py runserver".
 
 <br>
+
+<H6>Working with Docker</H6>
+
+To run the server as a Docker container, you need to execute the command "sudo docker-compose up -d". After that, the PostgresSQL database will start first, and then the application.
 
 <hr>
 <p><a href="https://t.me/Fx000777"><img width="30" src="https://cdn.icon-icons.com/icons2/923/PNG/256/telegram_icon-icons.com_72055.png"> </p></a>
