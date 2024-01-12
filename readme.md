@@ -13,7 +13,6 @@ I present to you my simple blog on the Django web framework. It allows users to 
 
 <H6>Starting server</H6>
 
-
 To run the web server, you need to download this repository first. Before starting, you need to set up environment variables for your system that control the behavior of the web server:
 1.) IS_DEBUG - This variable controls whether the server runs in debug or production mode.
 2.) DOMAIN_NAME - This variable specifies the domain name for links on the pages.
