@@ -1,0 +1,140 @@
+body {
+    margin: 0px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    padding: 3px;
+}
+
+.link234-wrapper {
+    height: fit-content;
+    width: 100vw;
+    display: flex;
+    justify-content: left;
+    border-right: 1px solid #eeeeee;
+}
+
+.header {
+    width: 100%;
+    height: fit-content;
+    padding: 5px;
+    background: #eeeeee;
+}
+
+.wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 6px;
+    justify-content: center;
+}
+
+.card {
+    font-size: 1.1em;
+    height: 25vh;
+    word-break: break-all;
+    padding: 3px;
+    border-radius: 15px;
+    flex-direction: row;
+    margin: 3px;
+    width: 30vw;
+    background: #eeeeee;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: stretch;
+}
+
+@media only screen and (max-width: 500px) {
+    .card {
+        font-size: 0.5em;
+        height: 10vh;
+        word-break: break-all;
+        padding: 7px;
+        border-radius: 15px;
+        margin: 6px;
+        width: 25vw;
+        background: #eeeeee;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.form-wrapper {
+    border-radius: 10px;
+    padding: 10px;
+    width: fit-content;
+    height: fit-content;
+    background-color: #eeeeee;
+    position: fixed;
+    top: 45%;
+    left: 42%;
+    -webkit-backface-visibility: hidden;
+    /*--^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Most Important*/
+}
+
+@media only screen and (max-device-width: 730px) {
+    .form-wrapper {
+        margin: 25px;
+        display: flex;
+        justify-content: center;
+        position: static;
+    }
+}
+
+.sidebar-wrapper {
+    border-radius: 5%;
+    padding: 10px;
+    width: fit-content;
+    height: fit-content;
+    background-color: #eeeeee;
+    display: flex;
+    margin-left: 0;
+    margin-top: 13px;
+}
+
+.content {
+    text-align: center;
+    margin-top: 30px;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #eeeeee;
+    padding: 20px;
+    height: fit-content;
+    overflow-x: hidden;
+}
+
+.state-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#insert_icon {
+    width: 20px;
+    height: 20px;
+}
+
+#topic {
+    box-shadow: none;
+    width: 20vw;
+    height: fit-content;
+    border-bottom: 2px black solid;
+}
+
+#editor {
+    overflow: hidden;
+    flex: wrap;
+    margin: 10px;
+    width: 70vw;
+    background-color: #eeeeee;
+    min-height: 50vh;
+    height: fit-content;
+}
+
+#editor img {
+    width: 5%;
+    height: 5%;
+}

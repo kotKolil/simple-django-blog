@@ -1,0 +1,50 @@
+{% comment %} TODO CHANGE localhost to domain name {% endcomment %}
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="http://127.0.0.1:8000/static/main.css" />
+        <script src="/static/main.js"> </script>
+    </head>
+
+    <body>
+
+        <div class="header">
+
+            <H3>
+                <a href="/" >
+                    {% block title %}
+                    {% endblock title %}
+                </a>
+            </H3>
+
+            <div class="link234-wrapper">
+
+                <div id="links234">
+                    <a href="http://127.0.0.1:8000/reg/" align="right">Registration | </a>
+                    <a href="http://127.0.0.1:8000/accounts/login" align="right">Log in |</a>
+                    <a href="http://127.0.0.1:8000/accounts/logout" align="right">Log out |</a>
+                    <a href="http://127.0.0.1:8000">Main Page |</a>
+                    <a href="http://127.0.0.1:8000/popular/">Popular states |</a>
+                    <a href="http://127.0.0.1:8000/channels/">all channels |</a>
+                    <a href="http://127.0.0.1:8000/studio/">studio |</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% block content %}
+        {% endblock  %}
+
+    </body>
+
+</html>

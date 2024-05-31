@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{topic}}{% endblock title %}
+{% block content %}
+
+
+<div class="wrapper">
+
+  <div class="sidebar-wrapper">
+    <img src="{{img_url}}" width="40px" height="40px" style="border-radius: 50%;">
+    <ul>
+    <li>{{name_of_blog}} by {{usr}} </li>
+    <li>theme: {{theme_blog}} </li>
+    <li>description : {{blog_description}} </li>
+    </ul>
+  </div>
+
+  <div class="content">
+  {{text}}
+  </div>
+
+
+</div>
+
+  
+
+
+
+
+{% endblock content %}

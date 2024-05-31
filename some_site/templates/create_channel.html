@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Регистрация нового канала{% endblock title %}
+{% block content %}
+<form method="POST" action="http://127.0.0.1:8000/set_channel/" enctype="multipart/form-data">
+  {% csrf_token %}
+  <!-- name of channel -->
+  <p for="name_of_channel">Enter name of your channel</p>
+  <input id="name_of_channel" name="name_of_channel" type="text" />
+  <!-- theme of channel -->
+  <p for="theme">Enter theme of your channel</p>
+  <input id="theme" name="theme" type="text" />
+  <!-- about channel -->
+  <p for="about">Enter about of your channel</p>
+  <input id="about" name="about" type="text" />
+  <!-- logo of channel -->
+  <p for="photo">Please, load logo of your channel</p>
+  <input id="photo" type="file" name="photo" accept="image/*" />
+  <input type="submit" value="Send">
+</form>
+{% endblock content %}

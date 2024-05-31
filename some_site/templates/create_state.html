@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}New state{% endblock title %}
+{% block content %}
+
+<div>
+    <script src="http://127.0.0.1:8000/static/main.js" charset="utf-8">
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 's') {
+                // cancel default action
+                event.preventDefault();
+                //run my code
+                save_state();
+        
+            }
+        });
+    </script>
+
+    
+</div>
+
+<div class="wrapper" >
+
+    <div contentEditable="true" id="topic">Заголовок</div>
+    <div contentEditable="true" id="editor">Текст статьи</div>
+
+
+</div>
+
+<div>
+    <script src="http://127.0.0.1:8000/static/main.js" charset="utf-8"></script>
+    <button id="save" onclick="save_state();">
+        publicate
+    </button>
+</div>
+<script>
+    edit_state_data();
+</script>
+
+
+{% endblock content %}

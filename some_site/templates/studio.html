@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Blog Studio{% endblock title %}
+{% block content %}
+<div class="sidebar-wrapper">
+    <img src="{{img_url}}" width="40px" height="40px" style="border-radius: 50%;">
+    <ul>
+    <li>{{name_of_blog}} by {{usr}} </li>
+    <li>theme: {{theme_blog}} </li>
+    <li>description : {{blog_description}} </li>
+    </ul>
+</div>
+{{ awesome_html | safe }}
+<h3>Статьи</h3>
+{{states_html}}
+{% endblock content %}
